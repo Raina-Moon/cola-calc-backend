@@ -84,8 +84,8 @@ router.get("yearly", (async (req:Request,res:Response) => {
         createdAt : {
 gte : startDate,
 lt : endDate
-        }
-        ...(type && {type : type})
+        },
+        ...(type && {type : type}),
       }
     })
 
