@@ -10,7 +10,7 @@ generator client {
 model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  name      String?
+  name      String
   birthday  String
   weight    Int
   colas     Cola[]
@@ -20,6 +20,6 @@ model Cola {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   amount    Int      
-  author    User?    @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
 }
