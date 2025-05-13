@@ -18,7 +18,7 @@ router.get("/daily", (async (req: Request, res: Response) => {
   try {
     const colas = await prisma.cola.findMany({
       where: {
-        authorId: Number(userId),
+        userId: Number(userId),
         createdAt: {
           gte: startDate,
           lt: endDate,
@@ -44,7 +44,7 @@ router.post("/", (async (req: Request, res: Response) => {
     const cola = await prisma.cola.create({
       data: {
         amount,
-        author: { connect: { id: userId } },
+        user: { connect: { id: userId } },
       },
     });
     res.status(201).json(cola);
