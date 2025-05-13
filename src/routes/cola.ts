@@ -34,6 +34,73 @@ router.get("/daily", (async (req: Request, res: Response) => {
   }
 }) as RequestHandler);
 
+router.get("/monthly", (async (req: Request, res: Response) => {
+  const { userId, year, month, type } = req.body;
+  if (!userId || !year || !month || !type) {
+    return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  const startDate = new Date(Number(year), Number(month) - 1, 1);
+  const endDate = new Date(Number(year), Number(month), 1);
+  try {
+    const colas = await prisma.cola.findMany({
+      where: {
+        userId: Number(userId),
+        createdAt: {
+          gte: startDate,
+          lt: endDate,
+        },
+        ...(type && { type: type }),
+      },
+    });
+
+    const totalAmount = colas.reduce((acc, cur) => acc + cur.amount, 0);
+    res.json({
+      year: Number(year),
+      month: Number(month),
+      type,
+      totalMl: totalAmount,
+      entries: colas,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching colas" });
+  }
+}) as RequestHandler);
+
+router.get("yearly", (async (req:Request,res:Response) => {
+  const {userId,year,type} = req.body
+
+  if (!userId || !year || !type ) {
+    return res.status(400).json({message : "Missing required fields"})
+  }
+
+  const startDate = new Date(Number(year),0,1)
+  const endDate = new Date(Number(year)+1,0,1)
+
+  try {
+    const colas = await prisma.cola.findMany({
+      where : {
+        userId : Number(userId),
+        createdAt : {
+gte : startDate,
+lt : endDate
+        }
+        ...(type && {type : type})
+      }
+    })
+
+    const totalAmount = colas.reduce((acc,cur) => acc + cur.amount,0)
+    res.json({
+      year : Number(year),
+      type,
+      totalMl : totalAmount,
+      entries : colas
+    })
+  } catch (err) {
+    res.status(500).json({message : "Error fetching colas"})
+  }
+})as RequestHandler);
+
 router.post("/", (async (req: Request, res: Response) => {
   const { userId, amount, type } = req.body;
 
