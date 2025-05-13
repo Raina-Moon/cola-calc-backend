@@ -12,7 +12,7 @@ model User {
   createdAt DateTime @default(now())
   name      String?
   birthday  String
-  role      Role     @default(USER)
+  weight    Int
   colas     Cola[]
 }
 
