@@ -5,7 +5,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.get("/daily", (async (req: Request, res: Response) => {
-  const { userId, date } = req.body;
+  const { userId, date, type } = req.body;
 
   if (!userId || !date) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -23,6 +23,7 @@ router.get("/daily", (async (req: Request, res: Response) => {
           gte: startDate,
           lt: endDate,
         },
+        ...(type && { type: type }),
       },
     });
 
@@ -34,16 +35,21 @@ router.get("/daily", (async (req: Request, res: Response) => {
 }) as RequestHandler);
 
 router.post("/", (async (req: Request, res: Response) => {
-  const { userId, amount } = req.body;
+  const { userId, amount, type } = req.body;
 
-  if (!userId || !amount) {
+  if (!userId || !amount || !type) {
     return res.status(400).json({ message: "Missing required fields" });
+  }
+
+  if (!["ORIGINAL", "ZERO"].includes(type)) {
+    return res.status(400).json({ message: "Invalid type" });
   }
 
   try {
     const cola = await prisma.cola.create({
       data: {
         amount,
+        type,
         user: { connect: { id: userId } },
       },
     });
