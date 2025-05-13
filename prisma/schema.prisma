@@ -20,6 +20,12 @@ model Cola {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   amount    Int      
-  user      User    @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
   userId    Int
+  type      ColaType @default(ORIGINAL)
+}
+
+enum ColaType {
+  ORIGINAL
+  ZERO
 }
