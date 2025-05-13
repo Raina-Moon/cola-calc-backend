@@ -7,7 +7,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 dotenv.config();
 
-router.get("/login", (async (req: Request, res: Response) => {
+router.post("/login", (async (req: Request, res: Response) => {
   const { name, birthday } = req.body;
 
   if (!name || !birthday) {
@@ -25,13 +25,41 @@ router.get("/login", (async (req: Request, res: Response) => {
     return res.status(401).json({ message: "User not found" });
   }
 
-  const token = jwt.sign(
+  const accessToken = jwt.sign(
+    { userId: user.id },
+    process.env.JWT_SECRET as string,
+    { expiresIn: "15m" }
+  );
+
+  const refreshtoken = jwt.sign(
     { userId: user.id },
     process.env.JWT_SECRET as string,
     { expiresIn: "7d" }
   );
 
-  res.json({ token, user });
+  res.json({ accessToken, refreshtoken, user });
+}) as RequestHandler);
+
+router.post("/refresh", (async (req: Request, res: Response) => {
+  const { refreshtoken } = req.body;
+  if (!refreshtoken) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+
+  try {
+    const decoded = jwt.verify(
+      refreshtoken,
+      process.env.JWT_SECRET as string
+    ) as { userId: number };
+    const newAccessToken = jwt.sign(
+      { userId: decoded.userId },
+      process.env.JWT_SECRET as string,
+      { expiresIn: "15m" }
+    );
+    res.json({ accessToken: newAccessToken });
+  } catch (err) {
+    return res.status(403).json({ message: "Invalid token" });
+  }
 }) as RequestHandler);
 
 export default router;
