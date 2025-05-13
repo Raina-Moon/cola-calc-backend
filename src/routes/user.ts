@@ -4,7 +4,7 @@ import express, { Request, RequestHandler, Response } from "express";
 const router = express.Router();
 const prisma = new PrismaClient();
 
-router.get("/", (async (req: Request, res: Response) => {
+router.post("/", (async (req: Request, res: Response) => {
   const { name, birthday, weight } = req.body;
 
   if (!name || !birthday || !weight) {
