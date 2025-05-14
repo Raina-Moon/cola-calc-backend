@@ -14,6 +14,8 @@ model User {
   birthday  String
   weight    Int
   colas     Cola[]
+
+  @@unique[name,birthday]
 }
 
 model Cola {
