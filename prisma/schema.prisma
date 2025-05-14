@@ -15,7 +15,7 @@ model User {
   weight    Int
   colas     Cola[]
 
-  @@unique[name,birthday]
+  @@unique([name,birthday])
 }
 
 model Cola {
