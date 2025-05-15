@@ -4,7 +4,10 @@ import jwt from "jsonwebtoken";
 export const verifyToken = ((req:Request,res:Response,next:NextFunction) => {
   const authHeader = req.headers.authorization;
 
+  console.log("Auth Header:", authHeader);
+
   if (!authHeader?.startsWith("Bearer ")) {
+    console.log("No Bearer token found");
     res.status(401).json({ message: "No token provided" });
     return;
   }
@@ -16,6 +19,7 @@ export const verifyToken = ((req:Request,res:Response,next:NextFunction) => {
       userId: number;
     };
     (req as any).userId = decoded.userId;
+    console.log("Decoded token:", decoded);
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
