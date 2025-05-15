@@ -6,7 +6,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.get("/daily", verifyToken, (async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const userId = (req as any).user.userId;
   const { date, type } = req.query;
 
   if (!userId || !date) {
@@ -42,7 +42,7 @@ router.get("/daily", verifyToken, (async (req: Request, res: Response) => {
 }) as RequestHandler);
 
 router.get("/monthly", verifyToken, (async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const userId = (req as any).user.userId;
   const { year, month, type } = req.query;
   if (!userId || !year || !month || !type) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -81,7 +81,7 @@ router.get("/monthly", verifyToken, (async (req: Request, res: Response) => {
 }) as RequestHandler);
 
 router.get("yearly", (async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const userId = (req as any).user.userId;
   const { year, type } = req.query;
 
   if (!userId || !year || !type) {
@@ -119,7 +119,7 @@ router.get("yearly", (async (req: Request, res: Response) => {
 }) as RequestHandler);
 
 router.post("/", verifyToken, (async (req: Request, res: Response) => {
-  const userId = (req as any).user.id;
+  const userId = (req as any).user.userId;
   const { amount, type } = req.body;
 
   console.log(userId, amount, type);
