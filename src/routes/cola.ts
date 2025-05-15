@@ -80,7 +80,7 @@ router.get("/monthly", verifyToken, (async (req: Request, res: Response) => {
   }
 }) as RequestHandler);
 
-router.get("/yearly", (async (req: Request, res: Response) => {
+router.get("/yearly", verifyToken,( async (req: Request, res: Response) => {
   const userId = (req as any).user.userId;
   const { year, type } = req.query;
 
