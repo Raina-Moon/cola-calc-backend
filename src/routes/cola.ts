@@ -124,7 +124,7 @@ router.post("/", verifyToken, (async (req: Request, res: Response) => {
 
   console.log(userId, amount, type);
 
-  if (!userId || !amount || !type) {
+  if (!userId || amount == null || !type) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
