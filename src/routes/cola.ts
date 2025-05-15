@@ -123,6 +123,7 @@ router.post("/", verifyToken, (async (req: Request, res: Response) => {
   const { amount, type } = req.body;
 
   console.log(userId, amount, type);
+  console.log("req.body :", req.body);
 
   if (!userId || amount == null || !type) {
     return res.status(400).json({ message: "Missing required fields" });
