@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { ColaType, PrismaClient } from "@prisma/client";
 import express, { Request, RequestHandler, Response } from "express";
 import { verifyToken } from "../middlewares/verifyToken";
 
@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 
 router.get("/daily", verifyToken, (async (req: Request, res: Response) => {
   const userId = (req as any).userId;
-  const { date, type } = req.body;
+  const { date, type } = req.query;
 
   if (!userId || !date) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -17,18 +17,23 @@ router.get("/daily", verifyToken, (async (req: Request, res: Response) => {
   const endDate = new Date(startDate);
   endDate.setDate(endDate.getDate() + 1);
 
-  try {
-    const colas = await prisma.cola.findMany({
-      where: {
-        userId: Number(userId),
-        createdAt: {
-          gte: startDate,
-          lt: endDate,
-        },
-        ...(type && { type: type }),
-      },
-    });
+  const parsedType = (Array.isArray(type) ? type[0] : type) as string;
+  const validType = parsedType?.toUpperCase() as ColaType;
 
+  const whereClause = {
+    where: {
+      userId: Number(userId),
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      ...(parsedType &&
+        ["ORIGINAL", "ZERO"].includes(validType) && { type: validType }),
+    },
+  };
+
+  try {
+    const colas = await prisma.cola.findMany(whereClause);
     const totalAmount = colas.reduce((acc, cur) => acc + cur.amount, 0);
     res.json({ date, totalMl: totalAmount, entries: colas });
   } catch (err) {
@@ -38,25 +43,30 @@ router.get("/daily", verifyToken, (async (req: Request, res: Response) => {
 
 router.get("/monthly", verifyToken, (async (req: Request, res: Response) => {
   const userId = (req as any).userId;
-  const { year, month, type } = req.body;
+  const { year, month, type } = req.query;
   if (!userId || !year || !month || !type) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   const startDate = new Date(Number(year), Number(month) - 1, 1);
   const endDate = new Date(Number(year), Number(month), 1);
-  try {
-    const colas = await prisma.cola.findMany({
-      where: {
-        userId: Number(userId),
-        createdAt: {
-          gte: startDate,
-          lt: endDate,
-        },
-        ...(type && { type: type }),
-      },
-    });
+  const parsedType = (Array.isArray(type) ? type[0] : type) as string;
+  const validType = parsedType?.toUpperCase() as ColaType;
 
+  const whereClause = {
+    where: {
+      userId: Number(userId),
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      ...(parsedType &&
+        ["ORIGINAL", "ZERO"].includes(validType) && { type: validType }),
+    },
+  };
+
+  try {
+    const colas = await prisma.cola.findMany(whereClause);
     const totalAmount = colas.reduce((acc, cur) => acc + cur.amount, 0);
     res.json({
       year: Number(year),
@@ -72,7 +82,7 @@ router.get("/monthly", verifyToken, (async (req: Request, res: Response) => {
 
 router.get("yearly", (async (req: Request, res: Response) => {
   const userId = (req as any).userId;
-  const { year, type } = req.body;
+  const { year, type } = req.query;
 
   if (!userId || !year || !type) {
     return res.status(400).json({ message: "Missing required fields" });
@@ -80,19 +90,22 @@ router.get("yearly", (async (req: Request, res: Response) => {
 
   const startDate = new Date(Number(year), 0, 1);
   const endDate = new Date(Number(year) + 1, 0, 1);
+  const parsedType = (Array.isArray(type) ? type[0] : type) as string;
+  const valideType = parsedType?.toUpperCase() as ColaType;
+  const whereClause = {
+    where: {
+      userId: Number(userId),
+      createdAt: {
+        gte: startDate,
+        lt: endDate,
+      },
+      ...(parsedType &&
+        ["ORIGINAL", "ZERO"].includes(valideType) && { type: valideType }),
+    },
+  };
 
   try {
-    const colas = await prisma.cola.findMany({
-      where: {
-        userId: Number(userId),
-        createdAt: {
-          gte: startDate,
-          lt: endDate,
-        },
-        ...(type && { type: type }),
-      },
-    });
-
+    const colas = await prisma.cola.findMany(whereClause);
     const totalAmount = colas.reduce((acc, cur) => acc + cur.amount, 0);
     res.json({
       year: Number(year),
