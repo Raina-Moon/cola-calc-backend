@@ -118,8 +118,9 @@ router.get("yearly", (async (req: Request, res: Response) => {
   }
 }) as RequestHandler);
 
-router.post("/", (async (req: Request, res: Response) => {
-  const { userId, amount, type } = req.body;
+router.post("/", verifyToken, (async (req: Request, res: Response) => {
+  const userId = (req as any).userId;
+  const { amount, type } = req.body;
 
   if (!userId || !amount || !type) {
     return res.status(400).json({ message: "Missing required fields" });
