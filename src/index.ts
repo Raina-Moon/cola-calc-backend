@@ -8,7 +8,12 @@ import authRoutes from "./routes/auth";
 dotenv.config();
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use("/api/user", userRoutes);
 app.use("/api/cola", colaRoutes);
