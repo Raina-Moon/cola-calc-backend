@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.patch("read/:id", async (req, res) => {
+router.patch("/read/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const updatedNotification = await prisma.notification.update({
