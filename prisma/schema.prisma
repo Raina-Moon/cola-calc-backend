@@ -15,7 +15,7 @@ model User {
   weight    Int
   colas     Cola[]
   notificationEnabled  Boolean    @default(true)
-  lastActiveAt      DateTime
+  lastActiveAt      DateTime?
   notifications   Notification[]
 
   @@unique([name,birthday])
