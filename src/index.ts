@@ -4,6 +4,7 @@ import cors from "cors";
 import userRoutes from "./routes/user";
 import colaRoutes from "./routes/cola";
 import authRoutes from "./routes/auth";
+import notificationRoutes from "./routes/notification";
 
 dotenv.config();
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 app.use("/api/user", userRoutes);
 app.use("/api/cola", colaRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/notification",notificationRoutes);
 
 const PORT = Number(process.env.PORT) || 5000;
 app.listen(PORT, "0.0.0.0", () =>
