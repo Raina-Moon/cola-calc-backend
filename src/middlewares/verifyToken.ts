@@ -8,10 +8,7 @@ export const verifyToken = ((
 ) => {
   const authHeader = req.headers.authorization;
 
-  console.log("Auth Header:", authHeader);
-
   if (!authHeader?.startsWith("Bearer ")) {
-    console.log("No Bearer token found");
     res.status(401).json({ message: "No token provided" });
     return;
   }
@@ -23,7 +20,6 @@ export const verifyToken = ((
       userId: number;
     };
     (req as any).user = { userId: decoded.userId };
-    console.log("Decoded token:", decoded);
     next();
   } catch (err) {
     return res.status(401).json({ message: "Invalid token" });
