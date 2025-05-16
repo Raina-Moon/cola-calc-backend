@@ -14,6 +14,9 @@ model User {
   birthday  String
   weight    Int
   colas     Cola[]
+  notificationEnabled  Boolean    @dafault(true)
+  lastActiveAt      DateTime
+  notifications   Notification[]
 
   @@unique([name,birthday])
 }
@@ -30,4 +33,13 @@ model Cola {
 enum ColaType {
   ORIGINAL
   ZERO
+}
+
+modal Notification {
+  id          Int       @id@default(autoincrement())
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      Int
+  message     String
+  isRead      Boolean   @default(false)
 }
