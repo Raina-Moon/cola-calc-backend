@@ -14,7 +14,7 @@ model User {
   birthday  String
   weight    Int
   colas     Cola[]
-  notificationEnabled  Boolean    @dafault(true)
+  notificationEnabled  Boolean    @default(true)
   lastActiveAt      DateTime
   notifications   Notification[]
 
