@@ -5,14 +5,20 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.post("/", (async (req: Request, res: Response) => {
-  const { name, birthday, weight } = req.body;
+  const { name, birthday, weight, notificationEnabled = true } = req.body;
 
   if (!name || !birthday || !weight) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   const user = await prisma.user.create({
-    data: { name, birthday, weight, lastActiveAt: new Date() },
+    data: {
+      name,
+      birthday,
+      weight,
+      lastActiveAt: new Date(),
+      notificationEnabled,
+    },
   });
 
   res.status(201).json(user);
