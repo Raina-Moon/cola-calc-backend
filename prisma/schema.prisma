@@ -35,7 +35,7 @@ enum ColaType {
   ZERO
 }
 
-modal Notification {
+model Notification {
   id          Int       @id@default(autoincrement())
   createdAt   DateTime  @default(now())
   user        User      @relation(fields: [userId], references: [id])
