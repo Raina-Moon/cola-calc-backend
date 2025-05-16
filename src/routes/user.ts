@@ -55,4 +55,21 @@ router.patch("/:id/active", async (req, res) => {
   }
 });
 
+router.patch("/:id/notification", async (req, res) => {
+  const { id } = req.params;
+  const { notificationEnabled } = req.body;
+
+  try {
+    const updated = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        notificationEnabled: notificationEnabled,
+      },
+    });
+    res.json(updated);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update user" });
+  }
+});
+
 export default router;
