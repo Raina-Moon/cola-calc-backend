@@ -12,7 +12,7 @@ router.post("/", (async (req: Request, res: Response) => {
   }
 
   const user = await prisma.user.create({
-    data: { name, birthday, weight },
+    data: { name, birthday, weight, lastActiveAt: new Date() },
   });
 
   res.status(201).json(user);
@@ -32,6 +32,21 @@ router.patch("/:id", async (req, res) => {
   });
 
   res.json(updated);
+});
+
+router.patch("/:id/active", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const actived = await prisma.user.update({
+      where: { id: Number(id) },
+      data: {
+        lastActiveAt: new Date(),
+      },
+    });
+    res.json(actived);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update user" });
+  }
 });
 
 export default router;
