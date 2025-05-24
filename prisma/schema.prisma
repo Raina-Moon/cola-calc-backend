@@ -11,7 +11,6 @@ model User {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
   name      String
-  birthday  String?
   weight    Int
   colas     Cola[]
   notificationEnabled  Boolean    @default(true)
