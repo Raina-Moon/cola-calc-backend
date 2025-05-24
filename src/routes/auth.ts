@@ -8,16 +8,15 @@ const prisma = new PrismaClient();
 dotenv.config();
 
 router.post("/login", (async (req: Request, res: Response) => {
-  const { name, birthday } = req.body;
+  const { name} = req.body;
 
-  if (!name || !birthday) {
+  if (!name) {
     return res.status(400).json({ message: "Missing required fields" });
   }
 
   const user = await prisma.user.findFirst({
     where: {
       name,
-      birthday,
     },
   });
 
