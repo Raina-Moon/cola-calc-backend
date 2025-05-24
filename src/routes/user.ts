@@ -8,14 +8,17 @@ const prisma = new PrismaClient();
 router.post("/", (async (req: Request, res: Response) => {
   const { name, weight, notificationEnabled = true } = req.body;
 
-  if (!name || !weight) {
-    return res.status(400).json({ message: "Missing required fields" });
+  const parsedWeight = Number(weight);
+
+  if (typeof name !== "string" || isNaN(parsedWeight) || parsedWeight <= 0) {
+    console.log("400: Missing or invalid fields", { name, weight });
+    return res.status(400).json({ message: "Missing or invalid fields" });
   }
 
   const user = await prisma.user.create({
     data: {
       name,
-      weight,
+      weight:parsedWeight,
       lastActiveAt: new Date(),
       notificationEnabled,
     },
