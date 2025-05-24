@@ -6,6 +6,13 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 router.post("/", (async (req: Request, res: Response) => {
+  console.log("🧾 RAW req.body:", req.body);
+  console.log(
+    "🧾 typeof body fields:",
+    typeof req.body.name,
+    typeof req.body.weight
+  );
+
   const { name, weight, notificationEnabled = true } = req.body;
 
   const parsedWeight = Number(weight);
@@ -18,7 +25,7 @@ router.post("/", (async (req: Request, res: Response) => {
   const user = await prisma.user.create({
     data: {
       name,
-      weight:parsedWeight,
+      weight: parsedWeight,
       lastActiveAt: new Date(),
       notificationEnabled,
     },
