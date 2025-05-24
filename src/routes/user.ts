@@ -16,6 +16,11 @@ router.post("/", (async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Missing or invalid fields" });
   }
 
+  const existingName = await prisma.user.findUnique({where :{name}})
+  if (existingName) {
+    return res.status(409).json({ message: "Name already exists" });
+  }
+
   const user = await prisma.user.create({
     data: {
       name,
