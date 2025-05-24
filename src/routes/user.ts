@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import express, { Request, RequestHandler, Response } from "express";
+import { verifyToken } from "../middlewares/verifyToken";
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -69,5 +70,27 @@ router.patch("/:id/notification", async (req, res) => {
     res.status(500).json({ error: "Failed to update user" });
   }
 });
+
+router.delete("/:id", verifyToken, (async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const userFromToken = (req as any).user.userId;
+
+  if (userFromToken !== Number(id)) {
+    return res
+      .status(403)
+      .json({ message: "You can only delete your own account" });
+  }
+  try {
+    await prisma.$transaction([
+      prisma.cola.deleteMany({ where: { userId: Number(id) } }),
+      prisma.notification.deleteMany({ where: { userId: Number(id) } }),
+      prisma.user.delete({ where: { id: Number(id) } }),
+    ]);
+
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete user" });
+  }
+}) as RequestHandler);
 
 export default router;
