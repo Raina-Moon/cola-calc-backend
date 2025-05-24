@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 dotenv.config();
 
 router.post("/login", (async (req: Request, res: Response) => {
-  const { name} = req.body;
+  const { name } = req.body;
 
   if (!name) {
     return res.status(400).json({ message: "Missing required fields" });
